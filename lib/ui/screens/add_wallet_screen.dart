@@ -1,0 +1,122 @@
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:wallet/Box/boxWallet.dart';
+import 'package:wallet/hive_adapters/WalletAdapter.dart';
+import 'package:wallet/providers/add_wallet_provider.dart';
+
+class AddWallet extends StatefulWidget {
+  const AddWallet({super.key});
+
+  @override
+  _AddWalletState createState() => _AddWalletState();
+}
+
+class _AddWalletState extends State<AddWallet> {
+  final _formKey = GlobalKey<FormState>();
+  final _cardNicknameController = TextEditingController();
+  final _cardNumberController = TextEditingController();
+  final _holderNameController = TextEditingController();
+  final _expDateController = TextEditingController();
+  final _cvvController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    // Clean up the controller when the widget is removed from the widget tree.
+    _cardNicknameController.dispose();
+    _cardNumberController.dispose();
+    _holderNameController.dispose();
+    _expDateController.dispose();
+    _cvvController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('My Form'),
+      ),
+      body: Form(
+        key: _formKey,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            _textField('Enter card nickname', _cardNicknameController),
+            _textField('Enter card number', _cardNumberController),
+            _textField('Enter card holder name', _holderNameController),
+            _textField('Enter exp date', _expDateController),
+            _textField('Enter cvv', _cvvController),
+            const SizedBox(height: 16),
+            MaterialButton(
+              onPressed: () {
+                context
+                    .read<AddWalletProvider>()
+                    .updateCardNickname(_cardNicknameController.text);
+                context
+                    .read<AddWalletProvider>()
+                    .updateCardNumber(_cardNumberController.text);
+                context
+                    .read<AddWalletProvider>()
+                    .updateHolderName(_holderNameController.text);
+                context
+                    .read<AddWalletProvider>()
+                    .updateExpDate(_expDateController.text);
+                context
+                    .read<AddWalletProvider>()
+                    .updateCvv(_cvvController.text);
+                // Navigator.pop(context);
+                setState(() {
+                  boxWallets.put(
+                      'key_$_cardNicknameController',
+                      WalletAdapter(
+                          _cardNicknameController.text,
+                          int.parse(_cardNumberController.text),
+                          _holderNameController.text,
+                          _expDateController.text,
+                          _cvvController.text));
+                });
+                Navigator.pop(context);
+                if (_formKey.currentState!.validate()) {
+                  // do something
+                }
+              },
+              child: Text('Submit'),
+            ),
+            Container(
+              height: 200,
+              child: ListView.builder(
+                  itemCount: boxWallets.length,
+                  itemBuilder: (BuildContext context, int index) {
+                    return ListTile(
+                      title: Text(boxWallets.getAt(index).cardNickname),
+                      subtitle:
+                          Text(boxWallets.getAt(index).cardNumber.toString()),
+                    );
+                  }),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _textField(String hintText, TextEditingController controller) {
+    return TextFormField(
+      controller: controller,
+      decoration: InputDecoration(
+        hintText: hintText,
+      ),
+      validator: (value) {
+        if (value == null || value.isEmpty) {
+          return 'Invalid Entry';
+        }
+        return null;
+      },
+    );
+  }
+}
