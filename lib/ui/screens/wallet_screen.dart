@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:wallet/Box/boxWallet.dart';
 
 class WalletScreen extends StatelessWidget {
@@ -9,23 +10,95 @@ class WalletScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Wallet'),
+        title: Text(
+          boxWallets.getAt(index).cardNickname.toUpperCase(),
+          style: const TextStyle(color: Colors.white),
+        ),
       ),
       body: Center(
         child: Column(
           children: <Widget>[
-            Text(boxWallets.getAt(index).cardNickname),
-            Text(boxWallets.getAt(index).cardNumber.toString()),
-            Text(boxWallets.getAt(index).holderName),
-            Text(boxWallets.getAt(index).expDate),
-            Text(boxWallets.getAt(index).cvv),
+            _fieldWidget(
+                'Card Number',
+                _textWidget(
+                    boxWallets.getAt(index).cardNumber.toString(), context),
+                    boxWallets.getAt(index).cardNumber.toString(),
+                context),
+                const Divider(thickness: 1, color: Colors.grey,),
+            _fieldWidget(
+                "Holder's Name",
+                _textWidget(boxWallets.getAt(index).holderName, context),
+                boxWallets.getAt(index).holderName,
+                context),
+                const Divider(thickness: 1, color: Colors.grey,),
+            _fieldWidget('Exp Date',
+                _textWidget(boxWallets.getAt(index).expDate, context),boxWallets.getAt(index).expDate,  context),
+                const Divider(thickness: 1, color: Colors.grey,),
+            _fieldWidget('CVV',
+                _textWidget(boxWallets.getAt(index).cvv, context), boxWallets.getAt(index).cvv, context),
+                const Divider(thickness: 1, color: Colors.grey,),
           ],
         ),
       ),
     );
   }
 
-  Widget _textWidget(String data) {
-    return Text(data);
+  Widget _textWidget(String data, BuildContext context) {
+    double? fontsize;
+    FontWeight? fontweight;
+    Color? color;
+    if (data.isNotEmpty) {
+      fontsize = 20;
+      fontweight = FontWeight.w400;
+      color = Colors.black;
+    } else {
+      fontsize = 12;
+      fontweight = FontWeight.w400;
+      color = Colors.grey;
+    }
+    return Text(data.isNotEmpty ? data : 'You chose not to save this field.',
+        style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+            fontSize: fontsize,
+            fontFamily: 'roboto',
+            fontWeight: fontweight,
+            color: color));
+  }
+
+  Widget _fieldWidget(String header, Widget body, String data, BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(0, 20, 0, 10),
+      child: Container(
+        // height: 80,
+        width: MediaQuery.of(context).size.width * 0.9,
+        decoration: const BoxDecoration(
+            // border: Border.all(),
+            // borderRadius: BorderRadius.circular(8),
+            // bordercolor: Colors.blue[100],
+            // color: Colors.blue[100],
+            ),
+        child: Row(mainAxisAlignment: MainAxisAlignment.start, 
+        children: [
+          Expanded(
+              flex: 3,
+              child: Text(
+                header,
+                style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                    fontSize: 16,
+                    fontFamily: 'roboto',
+                    fontWeight: FontWeight.w500),
+              )),
+          Expanded(flex: 4, child: body),
+          GestureDetector(
+              onTap: () {
+                Clipboard.setData(ClipboardData(text: data.toString()));
+                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                  content: Text('Copied to Clipboard'),
+                  duration: Duration(seconds: 1),
+                ));
+              },
+              child: const Icon(Icons.copy, color: Colors.grey, size: 15,))
+        ]),
+      ),
+    );
   }
 }

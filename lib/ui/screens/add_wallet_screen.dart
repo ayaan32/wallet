@@ -43,80 +43,87 @@ class _AddWalletState extends State<AddWallet> {
       ),
       body: Form(
         key: _formKey,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            _textField('Enter card nickname', _cardNicknameController),
-            _textField('Enter card number', _cardNumberController),
-            _textField('Enter card holder name', _holderNameController),
-            _textField('Enter exp date', _expDateController),
-            _textField('Enter cvv', _cvvController),
-            const SizedBox(height: 16),
-            MaterialButton(
-              onPressed: () {
-                context
-                    .read<AddWalletProvider>()
-                    .updateCardNickname(_cardNicknameController.text);
-                context
-                    .read<AddWalletProvider>()
-                    .updateCardNumber(_cardNumberController.text);
-                context
-                    .read<AddWalletProvider>()
-                    .updateHolderName(_holderNameController.text);
-                context
-                    .read<AddWalletProvider>()
-                    .updateExpDate(_expDateController.text);
-                context
-                    .read<AddWalletProvider>()
-                    .updateCvv(_cvvController.text);
-                // Navigator.pop(context);
-                setState(() {
-                  boxWallets.put(
-                      'key_$_cardNicknameController',
-                      WalletAdapter(
-                          _cardNicknameController.text,
-                          int.parse(_cardNumberController.text),
-                          _holderNameController.text,
-                          _expDateController.text,
-                          _cvvController.text));
-                });
-                Navigator.pop(context);
-                if (_formKey.currentState!.validate()) {
-                  // do something
-                }
-              },
-              child: Text('Submit'),
-            ),
-            Container(
-              height: 200,
-              child: ListView.builder(
-                  itemCount: boxWallets.length,
-                  itemBuilder: (BuildContext context, int index) {
-                    return ListTile(
-                      title: Text(boxWallets.getAt(index).cardNickname),
-                      subtitle:
-                          Text(boxWallets.getAt(index).cardNumber.toString()),
-                    );
-                  }),
-            ),
-          ],
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              _textField('Enter card nickname', _cardNicknameController),
+              _textField('Enter card number', _cardNumberController),
+              _textField('Enter card holder name', _holderNameController),
+              _textField('Enter exp date', _expDateController),
+              _textField('Enter cvv', _cvvController),
+              const SizedBox(height: 16),
+              MaterialButton(
+                color: Colors.blue,
+                onPressed: () {
+                  context
+                      .read<AddWalletProvider>()
+                      .updateCardNickname(_cardNicknameController.text);
+                  context
+                      .read<AddWalletProvider>()
+                      .updateCardNumber(_cardNumberController.text);
+                  context
+                      .read<AddWalletProvider>()
+                      .updateHolderName(_holderNameController.text);
+                  context
+                      .read<AddWalletProvider>()
+                      .updateExpDate(_expDateController.text);
+                  context
+                      .read<AddWalletProvider>()
+                      .updateCvv(_cvvController.text);
+                  // Navigator.pop(context);
+                  setState(() {
+                    boxWallets.put(
+                        'key_$_cardNicknameController',
+                        WalletAdapter(
+                            _cardNicknameController.text,
+                            int.parse(_cardNumberController.text),
+                            _holderNameController.text,
+                            _expDateController.text,
+                            _cvvController.text));
+                  Navigator.pop(context);
+                  });
+                  if (_formKey.currentState!.validate()) {
+                    // do something
+                  }
+                },
+                child: Text('Submit', style: Theme.of(context).textTheme.bodyLarge!.copyWith(color: Colors.white)),
+              ),
+              // Container(
+              //   height: 200,
+              //   child: ListView.builder(
+              //       itemCount: boxWallets.length,
+              //       itemBuilder: (BuildContext context, int index) {
+              //         return ListTile(
+              //           title: Text(boxWallets.getAt(index).cardNickname),
+              //           subtitle:
+              //               Text(boxWallets.getAt(index).cardNumber.toString()),
+              //         );
+              //       }),
+              // ),
+            ],
+          ),
         ),
       ),
     );
   }
 
   Widget _textField(String hintText, TextEditingController controller) {
-    return TextFormField(
-      controller: controller,
-      decoration: InputDecoration(
-        hintText: hintText,
+    return Padding(
+      padding: const EdgeInsets.only(top:15, left: 10, right: 10),
+      child: TextFormField(
+        controller: controller,
+        decoration: InputDecoration(
+          hintText: hintText,
+          border: OutlineInputBorder(),
+        ),
+        validator: (value) {
+          if (value == null || value.isEmpty) {
+            return 'Invalid Entry';
+          }
+          return null;
+        },
       ),
-      validator: (value) {
-        if (value == null || value.isEmpty) {
-          return 'Invalid Entry';
-        }
-        return null;
-      },
     );
   }
 }

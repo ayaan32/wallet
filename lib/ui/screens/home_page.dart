@@ -61,7 +61,7 @@ class _MyHomePageState extends State<MyHomePage> {
             padding: EdgeInsets.all(8.0),
             child: ListTile(
               leading: const Icon(Icons.account_balance_wallet),
-              title: Text(boxWallets.getAt(index).cardNickname),
+              title: Text(boxWallets.getAt(index).cardNickname.toUpperCase(), style: const TextStyle(fontSize: 18),),
               // subtitle: Text('Balance: 0.00000000'),
               trailing: const Icon(Icons.arrow_forward_ios),
             ),
