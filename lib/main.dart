@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:wallet/Box/boxWallet.dart';
@@ -6,9 +7,14 @@ import 'package:wallet/hive_adapters/WalletAdapter.dart';
 import 'package:wallet/providers/add_wallet_provider.dart';
 import 'package:wallet/ui/screens/add_wallet_screen.dart';
 import 'package:wallet/ui/screens/home_page.dart';
-import 'package:wallet/ui/screens/wallet_screen.dart';
+// import 'package:wallet/ui/screens/wallet_screen.dart';
 
 void main() async{
+   WidgetsFlutterBinding.ensureInitialized();
+  SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+    statusBarColor: Colors.transparent, // transparent status bar
+  ));
+
   await Hive.initFlutter();
   Hive.registerAdapter(WalletAdapterAdapter());
   boxWallets = await Hive.openBox<WalletAdapter>('walletBox');

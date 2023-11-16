@@ -39,6 +39,17 @@ class _AddWalletState extends State<AddWallet> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        flexibleSpace: Container(
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              colors: [
+                Colors.grey,
+                Colors.blue,
+              ],
+              stops: [0.3, 1.0],
+            ),
+          ),
+        ),
         title: const Text('My Form'),
       ),
       body: Form(
@@ -56,22 +67,6 @@ class _AddWalletState extends State<AddWallet> {
               MaterialButton(
                 color: Colors.blue,
                 onPressed: () {
-                  context
-                      .read<AddWalletProvider>()
-                      .updateCardNickname(_cardNicknameController.text);
-                  context
-                      .read<AddWalletProvider>()
-                      .updateCardNumber(_cardNumberController.text);
-                  context
-                      .read<AddWalletProvider>()
-                      .updateHolderName(_holderNameController.text);
-                  context
-                      .read<AddWalletProvider>()
-                      .updateExpDate(_expDateController.text);
-                  context
-                      .read<AddWalletProvider>()
-                      .updateCvv(_cvvController.text);
-                  // Navigator.pop(context);
                   setState(() {
                     boxWallets.put(
                         'key_$_cardNicknameController',
