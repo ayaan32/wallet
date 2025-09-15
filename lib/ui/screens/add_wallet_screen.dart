@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:wallet/Box/boxWallet.dart';
 import 'package:wallet/hive_adapters/WalletAdapter.dart';
-import 'package:wallet/providers/add_wallet_provider.dart';
 
 class AddWallet extends StatefulWidget {
   const AddWallet({super.key});
@@ -84,18 +82,6 @@ class _AddWalletState extends State<AddWallet> {
                 },
                 child: Text('Submit', style: Theme.of(context).textTheme.bodyLarge!.copyWith(color: Colors.white)),
               ),
-              // Container(
-              //   height: 200,
-              //   child: ListView.builder(
-              //       itemCount: boxWallets.length,
-              //       itemBuilder: (BuildContext context, int index) {
-              //         return ListTile(
-              //           title: Text(boxWallets.getAt(index).cardNickname),
-              //           subtitle:
-              //               Text(boxWallets.getAt(index).cardNumber.toString()),
-              //         );
-              //       }),
-              // ),
             ],
           ),
         ),
