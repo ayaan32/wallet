@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:wallet/Box/boxWallet.dart';
 import 'package:wallet/ui/screens/wallet_screen.dart';
 
@@ -44,48 +45,52 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
         ),
       ),
-      body: boxWallets.length == 0 ? Center(child: _neumorphicCard()) : ListView.builder(
-        itemCount: boxWallets.length,
-        itemBuilder: (BuildContext context, int index) {
-          return GestureDetector(
-            onTap: () {
-              WalletScreen(index: index);
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => WalletScreen(index: index),
-                ),
-              );
-              // print('Card $index tapped.');
-            },
-            child: Padding(
-              padding: const EdgeInsets.all(8),
-              child: Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(8),
-                  color: Colors.white,
-                  boxShadow: const [
-                    BoxShadow(
-                      // color: Colors.grey[400],
-                      blurRadius: 1,
-                      offset: Offset(0, 1),
+      body: ValueListenableBuilder(
+        valueListenable: boxWallets.listenable(),
+        builder: (context, Box<dynamic> box, _) {
+          return boxWallets.length == 0 ? Center(child: _emptyListWidget()) : ListView.builder(
+            itemCount: boxWallets.length,
+            itemBuilder: (BuildContext context, int index) {
+              return GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => WalletScreen(index: index),
                     ),
-                  ],
-                ),
+                  );
+                  // print('Card $index tapped.');
+                },
                 child: Padding(
-                  padding: EdgeInsets.all(8.0),
-                  child: ListTile(
-                    leading: const Icon(Icons.account_balance_wallet),
-                    title: Text(
-                      boxWallets.getAt(index).cardNickname.toUpperCase(),
-                      style: const TextStyle(fontSize: 18),
+                  padding: const EdgeInsets.all(8),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(8),
+                      color: Colors.white,
+                      boxShadow: const [
+                        BoxShadow(
+                          // color: Colors.grey[400],
+                          blurRadius: 1,
+                          offset: Offset(0, 1),
+                        ),
+                      ],
                     ),
-                    // subtitle: Text('Balance: 0.00000000'),
-                    trailing: const Icon(Icons.arrow_forward_ios),
+                    child: Padding(
+                      padding: EdgeInsets.all(8.0),
+                      child: ListTile(
+                        leading: const Icon(Icons.account_balance_wallet),
+                        title: Text(
+                          boxWallets.getAt(index).cardNickname.toUpperCase(),
+                          style: const TextStyle(fontSize: 18),
+                        ),
+                        // subtitle: Text('Balance: 0.00000000'),
+                        trailing: const Icon(Icons.arrow_forward_ios),
+                      ),
+                    ),
                   ),
                 ),
-              ),
-            ),
+              );
+            },
           );
         },
       ),
