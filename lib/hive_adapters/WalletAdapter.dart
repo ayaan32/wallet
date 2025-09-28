@@ -5,7 +5,7 @@ part 'WalletAdapter.g.dart';
 
 @HiveType(typeId: 1)
 class WalletAdapter{
-  WalletAdapter(this.cardNickname, this.cardNumber, this.holderName, this.expDate, this.cvv);
+  WalletAdapter(this.cardNickname, this.cardNumber, this.holderName, this.expiry, this.cvv);
   @HiveField(0)
   String cardNickname;
   @HiveField(1)
@@ -13,7 +13,7 @@ class WalletAdapter{
   @HiveField(2)
   String holderName;
   @HiveField(3)
-  String expDate;
+  String expiry;
   @HiveField(4)
   String cvv;
 }

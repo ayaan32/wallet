@@ -21,20 +21,21 @@ class ExpiryFormatter extends TextInputFormatter {
   }
 }
 
-class AddWallet extends StatefulWidget {
-  const AddWallet({super.key});
+class ModifyWalletScreen extends StatefulWidget {
+  const ModifyWalletScreen({super.key, required this.index});
+  final int index;
 
   @override
-  _AddWalletState createState() => _AddWalletState();
+  _ModifyWalletScreenState createState() => _ModifyWalletScreenState();
 }
 
-class _AddWalletState extends State<AddWallet> {
+class _ModifyWalletScreenState extends State<ModifyWalletScreen> {
   final _formKey = GlobalKey<FormState>();
-  final _cardNicknameController = TextEditingController();
-  final _cardNumberController = TextEditingController();
-  final _holderNameController = TextEditingController();
-  final _expDateController = TextEditingController();
-  final _cvvController = TextEditingController();
+  late TextEditingController _cardNicknameController;
+  late TextEditingController _cardNumberController;
+  late TextEditingController _holderNameController;
+  late TextEditingController _expDateController;
+  late TextEditingController _cvvController;
 
   final FocusNode _nicknameFocus = FocusNode();
   final FocusNode _cardNumberFocus = FocusNode();
@@ -45,6 +46,14 @@ class _AddWalletState extends State<AddWallet> {
   @override
   void initState() {
     super.initState();
+    // Retrieve the wallet data from Hive using the index
+    final wallet = boxWallets.getAt(widget.index);
+    // Initialize controllers with existing wallet data
+    _cardNicknameController = TextEditingController(text: wallet.cardNickname);
+    _cardNumberController = TextEditingController(text: wallet.cardNumber.toString());
+    _holderNameController = TextEditingController(text: wallet.holderName);
+    _expDateController = TextEditingController(text: wallet.expiry);
+    _cvvController = TextEditingController(text: wallet.cvv);
   }
 
   @override
@@ -102,7 +111,7 @@ class _AddWalletState extends State<AddWallet> {
             ),
           ),
         ),
-        title: const Text('My Form'),
+        title: const Text('Edit Card'),
       ),
       body: Form(
         key: _formKey,
@@ -133,19 +142,23 @@ class _AddWalletState extends State<AddWallet> {
                     onPressed: () {
                       if (_formKey.currentState!.validate()) {
                         setState(() {
-                          boxWallets.put(
-                              'key_${_cardNicknameController.text}',
-                              WalletAdapter(
-                                  _cardNicknameController.text,
-                                  int.parse(_cardNumberController.text),
-                                  _holderNameController.text,
-                                  _expDateController.text,
-                                  _cvvController.text));
+                          // Update the existing wallet entry in Hive
+                          boxWallets.putAt(
+                            widget.index,
+                            WalletAdapter(
+                              _cardNicknameController.text,
+                              int.parse(_cardNumberController.text),
+                              _holderNameController.text,
+                              _expDateController.text,
+                              _cvvController.text,
+                            ),
+                          );
+                          Navigator.pop(context);
                           Navigator.pop(context);
                         });
                       }
                     },
-                    child: Text('Submit', style: Theme.of(context).textTheme.bodyLarge!.copyWith(color: Colors.white)),
+                    child: Text('Update', style: Theme.of(context).textTheme.bodyLarge!.copyWith(color: Colors.white)),
                   ),
                 ),
               ],
@@ -165,10 +178,10 @@ class _AddWalletState extends State<AddWallet> {
         focusNode: focusNode,
         decoration: InputDecoration(
           hintText: hintText,
-          border: OutlineInputBorder(),
+          border: const OutlineInputBorder(),
         ),
-        maxLength: maxLength, // For card nickname, card number, and CVV
-        keyboardType: useNumericKeyboard || isNumeric ? TextInputType.number : TextInputType.text, // Numeric keyboard for card number and CVV
+        maxLength: maxLength,
+        keyboardType: useNumericKeyboard || isNumeric ? TextInputType.number : TextInputType.text,
         inputFormatters: formatters,
         validator: (value) {
           if (value == null || value.isEmpty) {
@@ -185,7 +198,6 @@ class _AddWalletState extends State<AddWallet> {
               return '$hintText must be exactly $exactLength digits';
             }
           }
-          // Optional: Add MM/YY format validation for expiration date
           if (hintText == 'Enter exp date' && value.isNotEmpty) {
             if (!RegExp(r'^\d{2}/\d{2}$').hasMatch(value)) {
               return 'Enter date as MM/YY (e.g., 12/25)';

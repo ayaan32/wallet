@@ -29,11 +29,10 @@ class _MyHomePageState extends State<MyHomePage> {
     return Scaffold(
       backgroundColor:Colors.grey[100],
       appBar: AppBar(
-        title: Center(
-            child: Text(
+        title: Text(
           widget.title,
           style: const TextStyle(fontSize: 25),
-        )),
+        ),
         flexibleSpace: Container(
           decoration: const BoxDecoration(
             gradient: LinearGradient(
@@ -52,6 +51,12 @@ class _MyHomePageState extends State<MyHomePage> {
           return boxWallets.length == 0 ? Center(child: _emptyListWidget()) : ListView.builder(
             itemCount: boxWallets.length,
             itemBuilder: (BuildContext context, int index) {
+              final wallet = boxWallets.getAt(index);
+              String maskedCardNumber = '**** **** **** ****';
+              if (wallet.cardNumber != null && (wallet.cardNumber).toString().length >= 4) {
+                String last4 = (wallet.cardNumber.toString()).substring(wallet.cardNumber.toString().length - 4);
+                maskedCardNumber = '**** **** **** $last4';
+              }
               return GestureDetector(
                 onTap: () {
                   Navigator.push(
@@ -60,32 +65,111 @@ class _MyHomePageState extends State<MyHomePage> {
                       builder: (context) => WalletScreen(index: index),
                     ),
                   );
-                  // print('Card $index tapped.');
                 },
                 child: Padding(
                   padding: const EdgeInsets.all(8),
                   child: Container(
+                    height: 200,
                     decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(8),
-                      color: Colors.white,
-                      boxShadow: const [
+                      borderRadius: BorderRadius.circular(16),
+                      gradient: LinearGradient(
+                    begin: Alignment.topRight,
+                    end: Alignment.bottomLeft,
+                    stops: [0.1, 0.4, 0.6, 0.9],
+                    colors: [
+                      Color(0xffF99D27).withOpacity(0.3),
+                      Color(0xffF99D27).withOpacity(0.4),
+                      Color(0xff005B75).withOpacity(0.6),
+                      Color(0xff005B75).withOpacity(0.9),
+                    ],
+                  ),
+                      boxShadow: [
                         BoxShadow(
-                          // color: Colors.grey[400],
+                          color: Colors.black.withOpacity(0.1),
                           blurRadius: 1,
-                          offset: Offset(0, 1),
+                          offset: Offset(0, 4),
                         ),
                       ],
                     ),
                     child: Padding(
-                      padding: EdgeInsets.all(8.0),
-                      child: ListTile(
-                        leading: const Icon(Icons.account_balance_wallet),
-                        title: Text(
-                          boxWallets.getAt(index).cardNickname.toUpperCase(),
-                          style: const TextStyle(fontSize: 18),
-                        ),
-                        // subtitle: Text('Balance: 0.00000000'),
-                        trailing: const Icon(Icons.arrow_forward_ios),
+                      padding: const EdgeInsets.all(16.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                wallet.cardNickname?.toUpperCase() ?? 'CARD',
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              const Icon(
+                                Icons.account_balance_wallet,
+                                color: Colors.white,
+                                size: 32,
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 20),
+                          Text(
+                            maskedCardNumber,
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 22,
+                              letterSpacing: 2.0,
+                              fontFamily: 'Courier', // Monospaced for card number look
+                            ),
+                          ),
+                          const SizedBox(height: 20),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  const Text(
+                                    'CARD HOLDER',
+                                    style: TextStyle(
+                                      color: Colors.white70,
+                                      fontSize: 12,
+                                    ),
+                                  ),
+                                  Text(
+                                    wallet.holderName?.toUpperCase() ?? 'JOHN DOE',
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 16,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  const Text(
+                                    'EXPIRES',
+                                    style: TextStyle(
+                                      color: Colors.white70,
+                                      fontSize: 12,
+                                    ),
+                                  ),
+                                  Text(
+                                    wallet.expiry ?? 'MM/YY',
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 16,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ],
                       ),
                     ),
                   ),
@@ -104,84 +188,6 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
-  Widget _cardWidget(){
-    return Container(
-      height: 200,
-      width: MediaQuery.of(context).size.width * 0.9, 
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topRight,
-              end: Alignment.bottomLeft,
-              stops: [
-                0.1,
-                0.4,
-                0.6,
-                0.9,
-              ],
-              colors: [
-                Color(0xffF99D27).withOpacity(0.3),
-                Color(0xffF99D27).withOpacity(0.4),
-                Color(0xff005B75).withOpacity(0.6),
-                Color(0xff005B75).withOpacity(0.9),
-              ],
-            ),
-            borderRadius: BorderRadius.circular(10),
-          ),
-          child: Center(
-            child: Text(
-              'Hello Gradient!',
-              style: TextStyle(
-                fontSize: 20.0,
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
-              ),
-        ),
-      ),
-    );
-  }
-
-
-  // Widget _neumorphicCard() {
-  //   return Neumorphic(
-  //     style: NeumorphicStyle(
-  //       shape: NeumorphicShape.concave,
-  //       boxShape: NeumorphicBoxShape.roundRect(BorderRadius.circular(10)),
-  //       depth: 8,
-  //       lightSource: LightSource.topLeft,
-  //       color: Colors.grey[300],
-  //     ),
-  //     child: Container(
-  //       height: 200,
-  //       width: MediaQuery.of(context).size.width * 0.7,
-  //       alignment: Alignment.center,
-  //       child: Text('Neumorphic Card'),
-  //     ),
-  //   );
-  // }
-
-  Widget _neumorphicCard() {
-   return Container(
-  width: MediaQuery.of(context).size.width * 0.9,
-  height: 200,
-  decoration: BoxDecoration(
-    boxShadow: [
-      BoxShadow(
-        color: Colors.white.withOpacity(0.8),
-        offset: Offset(-6.0, -6.0),
-        blurRadius: 16.0,
-      ),
-      BoxShadow(
-        color: Colors.black.withOpacity(0.1),
-        offset: Offset(6.0, 6.0),
-        blurRadius: 16.0,
-      ),
-    ],
-    color: Color(0xFFEFEEEE),
-    borderRadius: BorderRadius.circular(12.0),
-  ),
-);
-  }
-  
   Widget _emptyListWidget() {
   return SingleChildScrollView(
     child: Center(
@@ -206,13 +212,18 @@ class _MyHomePageState extends State<MyHomePage> {
                   ),
             ),
             const SizedBox(height: 10),
-            Text(
-              'Click on the + button to add a new card!',
-              style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-                    fontFamily: 'roboto',
-                    fontSize: 14,
-                    color: Colors.grey,
-                  ),
+            GestureDetector(
+              onTap: () {
+                _navigateToAddwalletScreen();
+              },
+              child: Text(
+                'Click on the + button to add a new card!',
+                style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                      fontFamily: 'roboto',
+                      fontSize: 14,
+                      color: Colors.grey,
+                    ),
+              ),
             ),
           ],
         ),
@@ -221,5 +232,3 @@ class _MyHomePageState extends State<MyHomePage> {
   );
 }
 }
-
-//<a href="https://iconscout.com/lottie-animations/empty-wallet" class="text-underline font-size-sm" target="_blank">Empty Wallet</a> by <a href="https://iconscout.com/contributors/saif-rehman" class="text-underline font-size-sm" target="_blank">Design Circle</a>

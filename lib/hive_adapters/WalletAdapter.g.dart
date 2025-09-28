@@ -36,7 +36,7 @@ class WalletAdapterAdapter extends TypeAdapter<WalletAdapter> {
       ..writeByte(2)
       ..write(obj.holderName)
       ..writeByte(3)
-      ..write(obj.expDate)
+      ..write(obj.expiry)
       ..writeByte(4)
       ..write(obj.cvv);
   }
