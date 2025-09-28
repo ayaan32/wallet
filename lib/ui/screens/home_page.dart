@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:wallet/Box/boxWallet.dart';
 import 'package:wallet/ui/screens/wallet_screen.dart';
+import 'package:lottie/lottie.dart';
 
 class MyHomePage extends StatefulWidget {
   MyHomePage({super.key, required this.title});
@@ -181,21 +182,44 @@ class _MyHomePageState extends State<MyHomePage> {
 );
   }
   
-  Widget _emptyListWidget(){
-    return Center(
+  Widget _emptyListWidget() {
+  return SingleChildScrollView(
+    child: Center(
       child: Padding(
         padding: const EdgeInsets.only(bottom: 100.0),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisSize: MainAxisSize.min,
           children: [
-            Image.asset('lib/assets/images/empty_wallet.png', width: 200, height: 200),
-            SizedBox(height: 10,),
-            Text('Your wallet is empty.', style: Theme.of(context).textTheme.bodyLarge!.copyWith(fontFamily: 'roboto', fontSize: 16),),
-            SizedBox(height: 10,),
-            Text('Click on the + button to add a new card!', style: Theme.of(context).textTheme.bodyLarge!.copyWith(fontFamily: 'roboto', fontSize: 14, color: Colors.grey),)
+            Image.asset(
+              'lib/assets/animations/emptyW.gif', // Replace with your GIF file path
+              width: 200,
+              height: 200,
+              fit: BoxFit.contain, // Ensures the GIF fits within the dimensions
+            ),
+            const SizedBox(height: 10),
+            Text(
+              'Your wallet is empty.',
+              style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                    fontFamily: 'roboto',
+                    fontSize: 16,
+                  ),
+            ),
+            const SizedBox(height: 10),
+            Text(
+              'Click on the + button to add a new card!',
+              style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                    fontFamily: 'roboto',
+                    fontSize: 14,
+                    color: Colors.grey,
+                  ),
+            ),
           ],
         ),
       ),
-    );
-  }
+    ),
+  );
 }
+}
+
+//<a href="https://iconscout.com/lottie-animations/empty-wallet" class="text-underline font-size-sm" target="_blank">Empty Wallet</a> by <a href="https://iconscout.com/contributors/saif-rehman" class="text-underline font-size-sm" target="_blank">Design Circle</a>
